@@ -30,4 +30,14 @@ document.getElementById("buttonForTakeTextFromFname").onclick = function () {
   console.log(inputTextElem.value);
   const header1Forname = document.getElementById("myName");
   header1Forname.innerHTML = inputTextElem.value;
+
+  let correctName = "Artem";
+
+  console.log(typeof correctName); // proof chto inputTextElem.value po faktu string variable
+
+  if (inputTextElem.value == correctName) {
+    console.log("correct");
+  } else {
+    console.log("incorrect");
+  }
 };
