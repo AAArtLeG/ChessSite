@@ -40,4 +40,6 @@ document.getElementById("buttonForTakeTextFromFname").onclick = function () {
   } else {
     console.log("incorrect");
   }
+
+  document.getElementById("buttonForTakeTextFromFname").style.height = "90px";
 };
