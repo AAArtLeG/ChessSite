@@ -4,14 +4,14 @@ const width = canvas.width;
 const height = canvas.height;
 
 function drawSquare(i, j, width) {
-  ctx.fillStyle = "#CCCC00";
+  ctx.fillStyle = "#444400";
   ctx.fillRect((i * width) / 8, (j * width) / 8, width / 8, width / 8);
 }
 
 function FillChessBackground() {
   const width = canvas.width;
   //const height = canvas.height;
-  ctx.fillStyle = "#FFFF00";
+  ctx.fillStyle = "#CCAA00";
   ctx.fillRect(0, 0, width, width); //placement to be changed
   const squareSize = width / 8;
   for (let i = 0; i < 8; i++) {
