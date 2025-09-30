@@ -32,4 +32,6 @@ document.getElementById("buttonForTakeTextFromFname").onclick = function () {
   header1Forname.innerHTML = inputTextElem.value;
 
   document.getElementById("buttonForTakeTextFromFname").style.height = "90px";
+  document.getElementById("coverBox").style.zIndex = -1;
+  document.getElementById("coverBox").style.display = "none";
 };

@@ -1,0 +1,18 @@
+#ChessSet {
+  anchor-name: --coverBox;
+}
+
+#coverBox {
+  position-anchor: --coverBox;
+  position: absolute;
+  top: anchor(top);
+  left: anchor(left);
+  width: anchor-size(width);
+  height: anchor-size(height);
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+
+  display: grid;
+  place-items: center;
+}
