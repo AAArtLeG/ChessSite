@@ -1,8 +1,5 @@
 const canvas = document.getElementById("ChessBoard");
 const ctx = canvas.getContext("2d");
-const width = canvas.width;
-const height = canvas.height;
-
 const workzone = document.getElementById("workzone");
 const maxSizeCanvas = 600; // Maximum size in pixels
 // Calculate size based on screen width
@@ -11,6 +8,12 @@ canvas.width = CanvasSize;
 canvas.height = CanvasSize;
 
 // Раздел игровой доски
+
+let chess_state = {
+    "1": {},
+    "2": {},
+    "3": {}
+};
 
 function drawSquare(i, j, width) {
   ctx.fillStyle = "#444400";
@@ -31,8 +34,11 @@ function FillChessBackground() {
     }
   }
 }
-
 FillChessBackground();
+
+function PlaceStartingPieces(){
+    
+}
 
 // Раздел подключения по сети
 function generate_peer(){ //instruction in https://peerjs.com/
