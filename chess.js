@@ -6,9 +6,9 @@ const height = canvas.height;
 const workzone = document.getElementById("workzone");
 const maxSizeCanvas = 800; // Maximum size in pixels
 // Calculate size based on screen width
-let CanvasSize = Math.min(window.innerWidth * 1, maxSize); // 90% of screen width or max 500px
-canvas.width = size;
-canvas.height = size;
+let CanvasSize = Math.min(window.innerWidth * 1, maxSizeCanvas); // 100% of screen width or max 800px
+canvas.width = CanvasSize;
+canvas.height = CanvasSize;
 
 function drawSquare(i, j, width) {
   ctx.fillStyle = "#444400";
