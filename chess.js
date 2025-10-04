@@ -4,11 +4,13 @@ const width = canvas.width;
 const height = canvas.height;
 
 const workzone = document.getElementById("workzone");
-const maxSizeCanvas = 800; // Maximum size in pixels
+const maxSizeCanvas = 600; // Maximum size in pixels
 // Calculate size based on screen width
-let CanvasSize = Math.min(window.innerWidth * 1, maxSizeCanvas); // 100% of screen width or max 800px
+let CanvasSize = Math.min(window.innerWidth * 1, maxSizeCanvas); // 100% of screen width or max 600px
 canvas.width = CanvasSize;
 canvas.height = CanvasSize;
+
+// Раздел игровой доски
 
 function drawSquare(i, j, width) {
   ctx.fillStyle = "#444400";
@@ -32,6 +34,16 @@ function FillChessBackground() {
 
 FillChessBackground();
 
+// Раздел подключения по сети
+function generate_peer(){ //instruction in https://peerjs.com/
+    var peer = new Peer();
+    const IDdisplay = document.getElementById("IDdisplay");
+    IDdisplay.textContent = 'Generating peer ID...';
+    peer.on('open', function(id) {
+        IDdisplay.textContent = 'My peer ID is: ' + id;
+    });
+}
+generate_peer();
 document.getElementById("buttonForTakeTextFromFname").onclick = function () {
   const inputTextElem = document.getElementById("fname");
   console.log(inputTextElem.value);
