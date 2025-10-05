@@ -7,36 +7,37 @@
     <title>Document</title>
   </head>
   <body>
-    <div id="ChessSet" style="display: flex; justify-content: center">
-      <canvas id="ChessBoard" width="500" height="500"></canvas>
+    <div id="workzone">
+      <div id="ChessSet">
+        <canvas id="ChessBoard" width="500" height="500"></canvas>
 
-      <img
-        class="chess-piece"
-        src="pieces/white_knight.png"
-        alt="Chess Knight"
-        width="60"
-        height="60"
-        style="position: absolute; cursor: grab; z-index: 1"
-      />
+        <img
+          class="chess-piece"
+          src="pieces/white_knight.png"
+          alt="Chess Knight"
+          width="60"
+          height="60"
+          style="position: absolute; cursor: grab; z-index: 1"
+        />
+      </div>
+
+      <div id="recruit"></div>
     </div>
 
     <div id="interactieTextInput">
-        
       <input type="text" id="fname" name="fname" placeholder="Say my name" />
       <button id="buttonForTakeTextFromFname" type="button">Click</button>
       <h1 id="myName"></h1>
     </div>
 
     <div id="coverBox">
-        <h5 id="IDdisplay" style="background-color: #f0f0f0; padding: 10px;">Text </h5>
+      <h5 id="IDdisplay" style="background-color: #f0f0f0; padding: 10px">
+        Text
+      </h5>
 
-        <input type="text" id="inputCode" placeholder="Input code" />
+      <input type="text" id="inputCode" placeholder="Input code" />
     </div>
-    
-    
-    
   </body>
-  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script> 
+  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
   <script src="chess.js"></script>
-
 </html>

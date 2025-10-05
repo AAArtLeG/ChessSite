@@ -1,5 +1,12 @@
+#workzone {
+  display: grid;
+  justify-content: center;
+}
+
 #ChessSet {
   anchor-name: --coverBox;
+  display: flex;
+  justify-content: center;
 }
 
 #coverBox {
@@ -15,4 +22,9 @@
 
   display: grid;
   place-items: center;
+}
+
+#recruit {
+  background: rgba(0, 0, 0, 0.3);
+  height: 120px;
 }

@@ -7,12 +7,14 @@ let CanvasSize = Math.min(window.innerWidth * 1, maxSizeCanvas); // 100% of scre
 canvas.width = CanvasSize;
 canvas.height = CanvasSize;
 
+const recruitZone = document.getElementById("recruit");
+recruitZone.style.width = `${CanvasSize}px`;
 // Раздел игровой доски
 
 let chess_state = {
-    "1": {},
-    "2": {},
-    "3": {}
+  1: {},
+  2: {},
+  3: {},
 };
 
 function drawSquare(i, j, width) {
@@ -36,18 +38,17 @@ function FillChessBackground() {
 }
 FillChessBackground();
 
-function PlaceStartingPieces(){
-    
-}
+function PlaceStartingPieces() {}
 
 // Раздел подключения по сети
-function generate_peer(){ //instruction in https://peerjs.com/
-    var peer = new Peer();
-    const IDdisplay = document.getElementById("IDdisplay");
-    IDdisplay.textContent = 'Generating peer ID...';
-    peer.on('open', function(id) {
-        IDdisplay.textContent = 'My peer ID is: ' + id;
-    });
+function generate_peer() {
+  //instruction in https://peerjs.com/
+  var peer = new Peer();
+  const IDdisplay = document.getElementById("IDdisplay");
+  IDdisplay.textContent = "Generating peer ID...";
+  peer.on("open", function (id) {
+    IDdisplay.textContent = "My peer ID is: " + id;
+  });
 }
 generate_peer();
 document.getElementById("buttonForTakeTextFromFname").onclick = function () {
