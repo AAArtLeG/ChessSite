@@ -50,6 +50,7 @@ function generate_peer() {
   //instruction in https://peerjs.com/
   var peer = new Peer();
   const IDdisplay = document.getElementById("IDdisplay");
+  IDdisplay.style.width = CanvasSize + "px";
   IDdisplay.textContent = "Generating peer ID...";
   peer.on("open", function (id) {
     IDdisplay.textContent = "My peer ID is: " + id;

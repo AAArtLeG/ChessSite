@@ -1,10 +1,10 @@
 #workzone {
   display: grid;
   justify-content: center;
+  anchor-name: --coverBox;
 }
 
 #ChessSet {
-  anchor-name: --coverBox;
   display: flex;
   justify-content: center;
 }
