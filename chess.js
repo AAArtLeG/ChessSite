@@ -2,15 +2,20 @@ const canvas = document.getElementById("ChessBoard");
 const ctx = canvas.getContext("2d");
 const workzone = document.getElementById("workzone");
 const maxSizeCanvas = 600; // Maximum size in pixels
+
 // Calculate size based on screen width
-let CanvasSize = Math.min(window.innerWidth * 1, maxSizeCanvas); // 100% of screen width or max 600px
+let CanvasSize = Math.min(window.visualViewport.width * 0.9, maxSizeCanvas); // 90% of screen width or max 600px
 canvas.width = CanvasSize;
 canvas.height = CanvasSize;
 
+canvas.style.width = CanvasSize + "px";
+canvas.style.height = CanvasSize + "px";
+recruit.style.width = CanvasSize + "px";
+
 const recruitZone = document.getElementById("recruit");
 recruitZone.style.width = `${CanvasSize}px`;
-// Раздел игровой доски
 
+// Раздел игровой доски
 let chess_state = {
   1: {},
   2: {},
