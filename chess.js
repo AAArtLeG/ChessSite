@@ -1,4 +1,6 @@
+const piece = document.querySelector(".chess-piece");
 const canvas = document.getElementById("ChessBoard");
+const chessSet = document.getElementById("ChessSet");
 const ctx = canvas.getContext("2d");
 const workzone = document.getElementById("workzone");
 const maxSizeCanvas = 600; // Maximum size in pixels
@@ -10,10 +12,15 @@ canvas.height = CanvasSize;
 
 canvas.style.width = CanvasSize + "px";
 canvas.style.height = CanvasSize + "px";
-recruit.style.width = CanvasSize + "px";
+
+chessSet.style.width = CanvasSize + "px";
+chessSet.style.height = CanvasSize + "px";
+
+workzone.style.width = CanvasSize + "px";
 
 const recruitZone = document.getElementById("recruit");
 recruitZone.style.width = `${CanvasSize}px`;
+recruitZone.style.height = piece.height * 2 + "px";
 
 // Раздел игровой доски
 let chess_state = {
@@ -43,6 +50,10 @@ function FillChessBackground() {
 }
 FillChessBackground();
 
+const coverBox = document.getElementById("coverBox");
+
+//coverBox.style.width = `${window.visualViewport.width}px`;
+
 function PlaceStartingPieces() {}
 
 // Раздел подключения по сети
@@ -59,7 +70,6 @@ function generate_peer() {
 generate_peer();
 
 //move chess piece section
-const piece = document.querySelector(".chess-piece");
 let positionOfCursorFromPieceX = 0;
 let positionOfCursorFromPieceY = 0;
 let isMoving = false;
@@ -78,10 +88,24 @@ function eventOnMouseDown(e) {
 
 function eventOnMouseMove(e) {
   if (isMoving) {
-    const rectBoard = canvas.getBoundingClientRect();
+    const rectWorkzone = workzone.getBoundingClientRect();
 
-    let newX = e.clientX - positionOfCursorFromPieceX;
-    let newY = e.clientY - positionOfCursorFromPieceY;
+    //координаты точки начала рисования картинки, относительно relative контейнера, в котором находимся, теперь workzone
+    let newX = e.clientX - positionOfCursorFromPieceX - rectWorkzone.x;
+    let newY = e.clientY - positionOfCursorFromPieceY - rectWorkzone.y;
+
+    if (newX < 0) {
+      newX = 0;
+    }
+    if (newX > rectWorkzone.width - piece.width) {
+      newX = rectWorkzone.width - piece.width;
+    }
+    if (newY < 0) {
+      newY = 0;
+    }
+    if (newY > rectWorkzone.height - piece.height) {
+      newY = rectWorkzone.height - piece.height;
+    }
 
     piece.style.left = newX + "px";
     piece.style.top = newY + "px";
@@ -101,12 +125,12 @@ document.addEventListener("mousemove", eventOnMouseMove);
 document.addEventListener("mouseup", eventOnMouseUp);
 
 document.getElementById("buttonForTakeTextFromFname").onclick = function () {
-  const inputTextElem = document.getElementById("fname");
-  console.log(inputTextElem.value);
-  const header1Forname = document.getElementById("myName");
-  header1Forname.innerHTML = inputTextElem.value;
+  //const inputTextElem = document.getElementById("fname");
+  //console.log(inputTextElem.value);
+  //const header1Forname = document.getElementById("myName");
+  //header1Forname.innerHTML = inputTextElem.value;
 
-  document.getElementById("buttonForTakeTextFromFname").style.height = "90px";
+  //document.getElementById("buttonForTakeTextFromFname").style.height = "90px";
   document.getElementById("coverBox").style.zIndex = -1;
   document.getElementById("coverBox").style.display = "none";
 };
