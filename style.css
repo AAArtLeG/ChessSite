@@ -5,6 +5,7 @@
 }
 
 #ChessSet {
+  /*position: relative*/
   display: flex;
   justify-content: center;
 }
@@ -27,4 +28,12 @@
 #recruit {
   background: rgba(0, 0, 0, 0.3);
   height: 120px;
+}
+
+.chess-piece {
+  position: absolute;
+  cursor: grab;
+  z-index: 1;
+  width: 60px;
+  height: 60px;
 }

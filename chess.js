@@ -57,6 +57,49 @@ function generate_peer() {
   });
 }
 generate_peer();
+
+//move chess piece section
+const piece = document.querySelector(".chess-piece");
+let positionOfCursorFromPieceX = 0;
+let positionOfCursorFromPieceY = 0;
+let isMoving = false;
+
+function eventOnMouseDown(e) {
+  isMoving = true;
+
+  piece.style.cursor = "grabbing";
+
+  const rectPiece = piece.getBoundingClientRect();
+
+  //позиция курсора, относительно левого верхнего угла img фигуры
+  positionOfCursorFromPieceX = e.clientX - rectPiece.x;
+  positionOfCursorFromPieceY = e.clientY - rectPiece.y;
+}
+
+function eventOnMouseMove(e) {
+  if (isMoving) {
+    const rectBoard = canvas.getBoundingClientRect();
+
+    let newX = e.clientX - positionOfCursorFromPieceX;
+    let newY = e.clientY - positionOfCursorFromPieceY;
+
+    piece.style.left = newX + "px";
+    piece.style.top = newY + "px";
+  }
+}
+
+function eventOnMouseUp(e) {
+  isMoving = false;
+
+  piece.style.cursor = "grab";
+}
+
+piece.addEventListener("mousedown", eventOnMouseDown);
+
+document.addEventListener("mousemove", eventOnMouseMove);
+
+document.addEventListener("mouseup", eventOnMouseUp);
+
 document.getElementById("buttonForTakeTextFromFname").onclick = function () {
   const inputTextElem = document.getElementById("fname");
   console.log(inputTextElem.value);
