@@ -1,4 +1,4 @@
-const piece = document.querySelector(".chess-piece"); //this finds ALL pieceS
+const pieces = document.querySelectorAll(".chess-piece"); //this finds ALL pieceS
 const canvas = document.getElementById("ChessBoard");
 const chessSet = document.getElementById("ChessSet");
 const ctx = canvas.getContext("2d");
@@ -6,7 +6,6 @@ const workzone = document.getElementById("workzone");
 const maxSizeCanvas = 600; // Maximum size in pixels
 const coverBox = document.getElementById("coverBox");
 //coverBox.style.width = `${window.visualViewport.width}px`;
-
 
 // Calculate size based on screen width
 let CanvasSize = Math.min(window.visualViewport.width * 0.9, maxSizeCanvas); // 90% of screen width or max 600px
@@ -23,7 +22,7 @@ workzone.style.width = CanvasSize + "px";
 
 const recruitZone = document.getElementById("recruit");
 recruitZone.style.width = `${CanvasSize}px`;
-recruitZone.style.height = piece.height * 2 + "px";
+recruitZone.style.height = pieces[0].height * 2 + "px";
 
 // Раздел игровой доски
 let chess_state = {
@@ -56,7 +55,6 @@ FillChessBackground();
 function PlaceStartingPieces() {}
 //PlaceStartingPieces();
 
-
 // Раздел подключения по сети
 function generate_peer() {
   //instruction in https://peerjs.com/
@@ -74,13 +72,17 @@ generate_peer();
 let positionOfCursorFromPieceX = 0;
 let positionOfCursorFromPieceY = 0;
 let isMoving = false;
+let activePiece = null;
 
 function eventOnMouseDown(e) {
+  e.preventDefault(); // for prevent drag-click
+
   isMoving = true;
+  activePiece = e.currentTarget;
 
-  piece.style.cursor = "grabbing";
+  activePiece.style.cursor = "grabbing";
 
-  const rectPiece = piece.getBoundingClientRect();
+  const rectPiece = activePiece.getBoundingClientRect();
 
   //позиция курсора, относительно левого верхнего угла img фигуры
   positionOfCursorFromPieceX = e.clientX - rectPiece.x;
@@ -88,7 +90,7 @@ function eventOnMouseDown(e) {
 }
 
 function eventOnMouseMove(e) {
-  if (isMoving) {
+  if (isMoving && activePiece) {
     const rectWorkzone = workzone.getBoundingClientRect();
 
     //координаты точки начала рисования картинки, относительно relative контейнера, в котором находимся, теперь workzone
@@ -98,34 +100,41 @@ function eventOnMouseMove(e) {
     if (newX < 0) {
       newX = 0;
     }
-    if (newX > rectWorkzone.width - piece.width) {
-      newX = rectWorkzone.width - piece.width;
+    if (newX > rectWorkzone.width - activePiece.offsetWidth) {
+      newX = rectWorkzone.width - activePiece.offsetWidth;
     }
     if (newY < 0) {
       newY = 0;
     }
-    if (newY > rectWorkzone.height - piece.height) {
-      newY = rectWorkzone.height - piece.height;
+    if (newY > rectWorkzone.height - activePiece.offsetHeight) {
+      newY = rectWorkzone.height - activePiece.offsetHeight;
     }
 
-    piece.style.left = newX + "px";
-    piece.style.top = newY + "px";
+    activePiece.style.left = newX + "px";
+    activePiece.style.top = newY + "px";
   }
 }
 
 function eventOnMouseUp(e) {
+  if (!isMoving || !activePiece) return;
+
   isMoving = false;
 
-  piece.style.cursor = "grab";
+  activePiece.style.cursor = "grab";
+  activePiece = null;
 }
 
-piece.addEventListener("mousedown", eventOnMouseDown);
+pieces.forEach((piece) => {
+  piece.style.cursor = "grab";
+  piece.addEventListener("mousedown", eventOnMouseDown);
+});
 
 document.addEventListener("mousemove", eventOnMouseMove);
 
-piece.addEventListener("mouseup", eventOnMouseUp);
+document.addEventListener("mouseup", eventOnMouseUp);
 
 document.getElementById("buttonForTakeTextFromFname").onclick = function () {
+  /*  */
   //const inputTextElem = document.getElementById("fname");
   //console.log(inputTextElem.value);
   //const header1Forname = document.getElementById("myName");
