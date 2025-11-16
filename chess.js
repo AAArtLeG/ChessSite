@@ -122,7 +122,7 @@ piece.addEventListener("mousedown", eventOnMouseDown);
 
 document.addEventListener("mousemove", eventOnMouseMove);
 
-document.addEventListener("mouseup", eventOnMouseUp);
+piece.addEventListener("mouseup", eventOnMouseUp);
 
 document.getElementById("buttonForTakeTextFromFname").onclick = function () {
   //const inputTextElem = document.getElementById("fname");
