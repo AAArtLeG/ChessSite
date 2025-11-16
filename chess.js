@@ -1,9 +1,12 @@
-const piece = document.querySelector(".chess-piece");
+const piece = document.querySelector(".chess-piece"); //this finds ALL pieceS
 const canvas = document.getElementById("ChessBoard");
 const chessSet = document.getElementById("ChessSet");
 const ctx = canvas.getContext("2d");
 const workzone = document.getElementById("workzone");
 const maxSizeCanvas = 600; // Maximum size in pixels
+const coverBox = document.getElementById("coverBox");
+//coverBox.style.width = `${window.visualViewport.width}px`;
+
 
 // Calculate size based on screen width
 let CanvasSize = Math.min(window.visualViewport.width * 0.9, maxSizeCanvas); // 90% of screen width or max 600px
@@ -50,11 +53,9 @@ function FillChessBackground() {
 }
 FillChessBackground();
 
-const coverBox = document.getElementById("coverBox");
-
-//coverBox.style.width = `${window.visualViewport.width}px`;
-
 function PlaceStartingPieces() {}
+//PlaceStartingPieces();
+
 
 // Раздел подключения по сети
 function generate_peer() {
