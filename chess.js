@@ -1,5 +1,4 @@
-//bug: if there are no pieces, then pieces[0].height crashes the site
-const pieces = document.querySelectorAll(".chess-piece"); //this finds ALL pieceS
+const softSnapping = false;
 const canvas = document.getElementById("ChessBoard");
 const chessSet = document.getElementById("ChessSet");
 const ctx = canvas.getContext("2d");
@@ -23,7 +22,7 @@ workzone.style.width = CanvasSize + "px";
 
 const recruitZone = document.getElementById("recruit");
 recruitZone.style.width = `${CanvasSize}px`;
-recruitZone.style.height = pieces[0].height * 2 + "px";
+recruitZone.style.height = canvas.height /8 + "px";
 
 // Раздел игровой доски
 const boardState = {
@@ -93,6 +92,7 @@ function PlacePieces(boardState) {
     }
 }
 PlacePieces(boardState);
+const pieces = document.querySelectorAll(".chess-piece"); //has to be created after board setup
 
 function drawSquare(i, j, width) {
   ctx.fillStyle = "#444400";
