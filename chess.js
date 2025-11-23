@@ -1,3 +1,4 @@
+//bug: if there are no pieces, then pieces[0].height crashes the site
 const pieces = document.querySelectorAll(".chess-piece"); //this finds ALL pieceS
 const canvas = document.getElementById("ChessBoard");
 const chessSet = document.getElementById("ChessSet");
@@ -28,43 +29,70 @@ recruitZone.style.height = pieces[0].height * 2 + "px";
 const boardState = {
     //coordinates span from 0 to 1
   // White pieces
-  "wR1": { type: "rook",   color: "white", x: 0.5/8, y: 0.5/8 },
-  "wN1": { type: "knight", color: "white", x: 1.5/8, y: 0.5/8 },
-  "wB1": { type: "bishop", color: "white", x: 2.5/8, y: 0.5/8 },
-  "wQ":  { type: "queen",  color: "white", x: 3.5/8, y: 0.5/8 },
-  "wK":  { type: "king",   color: "white", x: 4.5/8, y: 0.5/8 },
-  "wB2": { type: "bishop", color: "white", x: 5.5/8, y: 0.5/8 },
-  "wN2": { type: "knight", color: "white", x: 6.5/8, y: 0.5/8 },
-  "wR2": { type: "rook",   color: "white", x: 7.5/8, y: 0.5/8 },
+  "1": { type: "rook",   color: "white", x: 0.5/8, y: 0.5/8 },
+  "2": { type: "knight", color: "white", x: 1.5/8, y: 0.5/8 },
+  "3": { type: "bishop", color: "white", x: 2.5/8, y: 0.5/8 },
+  "4":  { type: "queen",  color: "white", x: 3.5/8, y: 0.5/8 },
+  "5":  { type: "king",   color: "white", x: 4.5/8, y: 0.5/8 },
+  "6": { type: "bishop", color: "white", x: 5.5/8, y: 0.5/8 },
+  "7": { type: "knight", color: "white", x: 6.5/8, y: 0.5/8 },
+  "8": { type: "rook",   color: "white", x: 7.5/8, y: 0.5/8 },
 
-  "wP1": { type: "pawn", color: "white", x: 0.5/8, y: 1.5/8 },
-  "wP2": { type: "pawn", color: "white", x: 1.5/8, y: 1.5/8 },
-  "wP3": { type: "pawn", color: "white", x: 2.5/8, y: 1.5/8 },
-  "wP4": { type: "pawn", color: "white", x: 3.5/8, y: 1.5/8 },
-  "wP5": { type: "pawn", color: "white", x: 4.5/8, y: 1.5/8 },
-  "wP6": { type: "pawn", color: "white", x: 5.5/8, y: 1.5/8 },
-  "wP7": { type: "pawn", color: "white", x: 6.5/8, y: 1.5/8 },
-  "wP8": { type: "pawn", color: "white", x: 7.5/8, y: 1.5/8 },
+  "9": { type: "pawn", color: "white", x: 0.5/8, y: 1.5/8 },
+  "10": { type: "pawn", color: "white", x: 1.5/8, y: 1.5/8 },
+  "11": { type: "pawn", color: "white", x: 2.5/8, y: 1.5/8 },
+  "12": { type: "pawn", color: "white", x: 3.5/8, y: 1.5/8 },
+  "13": { type: "pawn", color: "white", x: 4.5/8, y: 1.5/8 },
+  "14": { type: "pawn", color: "white", x: 5.5/8, y: 1.5/8 },
+  "15": { type: "pawn", color: "white", x: 6.5/8, y: 1.5/8 },
+  "16": { type: "pawn", color: "white", x: 7.5/8, y: 1.5/8 },
 
   // Black pieces
-  "bR1": { type: "rook",   color: "black", x: 0.5/8, y: 7.5/8 },
-  "bN1": { type: "knight", color: "black", x: 1.5/8, y: 7.5/8 },
-  "bB1": { type: "bishop", color: "black", x: 2.5/8, y: 7.5/8 },
-  "bQ":  { type: "queen",  color: "black", x: 3.5/8, y: 7.5/8 },
-  "bK":  { type: "king",   color: "black", x: 4.5/8, y: 7.5/8 },
-  "bB2": { type: "bishop", color: "black", x: 5.5/8, y: 7.5/8 },
-  "bN2": { type: "knight", color: "black", x: 6.5/8, y: 7.5/8 },
-  "bR2": { type: "rook",   color: "black", x: 7.5/8, y: 7.5/8 },
+  "17": { type: "rook",   color: "black", x: 0.5/8, y: 7.5/8 },
+  "18": { type: "knight", color: "black", x: 1.5/8, y: 7.5/8 },
+  "19": { type: "bishop", color: "black", x: 2.5/8, y: 7.5/8 },
+  "20":  { type: "queen",  color: "black", x: 3.5/8, y: 7.5/8 },
+  "21":  { type: "king",   color: "black", x: 4.5/8, y: 7.5/8 },
+  "22": { type: "bishop", color: "black", x: 5.5/8, y: 7.5/8 },
+  "23": { type: "knight", color: "black", x: 6.5/8, y: 7.5/8 },
+  "24": { type: "rook",   color: "black", x: 7.5/8, y: 7.5/8 },
 
-  "bP1": { type: "pawn", color: "black", x: 0.5/8, y: 6.5/8 },
-  "bP2": { type: "pawn", color: "black", x: 1.5/8, y: 6.5/8 },
-  "bP3": { type: "pawn", color: "black", x: 2.5/8, y: 6.5/8 },
-  "bP4": { type: "pawn", color: "black", x: 3.5/8, y: 6.5/8 },
-  "bP5": { type: "pawn", color: "black", x: 4.5/8, y: 6.5/8 },
-  "bP6": { type: "pawn", color: "black", x: 5.5/8, y: 6.5/8 },
-  "bP7": { type: "pawn", color: "black", x: 6.5/8, y: 6.5/8 },
-  "bP8": { type: "pawn", color: "black", x: 7.5/8, y: 6.5/8 }
+  "25": { type: "pawn", color: "black", x: 0.5/8, y: 6.5/8 },
+  "26": { type: "pawn", color: "black", x: 1.5/8, y: 6.5/8 },
+  "27": { type: "pawn", color: "black", x: 2.5/8, y: 6.5/8 },
+  "28": { type: "pawn", color: "black", x: 3.5/8, y: 6.5/8 },
+  "29": { type: "pawn", color: "black", x: 4.5/8, y: 6.5/8 },
+  "30": { type: "pawn", color: "black", x: 5.5/8, y: 6.5/8 },
+  "31": { type: "pawn", color: "black", x: 6.5/8, y: 6.5/8 },
+  "32": { type: "pawn", color: "black", x: 7.5/8, y: 6.5/8 }
 };
+function PlacePieces(boardState) {
+    const set = document.getElementById("ChessSet");
+    
+    for (const key in boardState) {
+        const piece = boardState[key];
+        console.log(key, piece);
+        
+        const el = document.createElement("div");
+        el.classList.add(
+            "chess-piece",
+            piece.color,
+            piece.type
+        ); //adding classes to div object
+        el.setAttribute("draggable", "false");
+        
+        const board = document.getElementById("ChessBoard");
+        const rect = board.getBoundingClientRect();
+        const px = piece.x * rect.width;
+        const py = (1 - piece.y) * rect.height; 
+        el.style.left = px + "px";
+        el.style.top = py + "px";
+        el.style.position = "absolute";
+        el.dataset.id = key;
+        set.appendChild(el);
+    }
+}
+PlacePieces(boardState);
 
 function drawSquare(i, j, width) {
   ctx.fillStyle = "#444400";
@@ -87,13 +115,7 @@ function FillChessBackground() {
 }
 FillChessBackground();
 
-function PlaceStartingPieces() {
-    for (const key in boardState) {
-        const piece = boardState[key];
-        console.log(key, piece);
-    }
-}
-//PlaceStartingPieces();
+
 
 // Раздел подключения по сети
 function generate_peer() {
@@ -134,8 +156,8 @@ function eventOnMouseMove(e) {
     const rectWorkzone = workzone.getBoundingClientRect();
 
     //координаты точки начала рисования картинки, относительно relative контейнера, в котором находимся, теперь workzone
-    let newX = e.clientX - positionOfCursorFromPieceX - rectWorkzone.x;
-    let newY = e.clientY - positionOfCursorFromPieceY - rectWorkzone.y;
+    let newX = e.clientX  - rectWorkzone.x; // - positionOfCursorFromPieceX
+    let newY = e.clientY  - rectWorkzone.y; // - positionOfCursorFromPieceY
 
     if (newX < 0) {
       newX = 0;
