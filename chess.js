@@ -162,14 +162,14 @@ function eventOnMouseMove(e) {
     if (newX < 0) {
       newX = 0;
     }
-    if (newX > rectWorkzone.width - activePiece.offsetWidth) {
-      newX = rectWorkzone.width - activePiece.offsetWidth;
+    if (newX > rectWorkzone.width ) {
+      newX = rectWorkzone.width ;
     }
     if (newY < 0) {
       newY = 0;
     }
-    if (newY > rectWorkzone.height - activePiece.offsetHeight) {
-      newY = rectWorkzone.height - activePiece.offsetHeight;
+    if (newY > rectWorkzone.height ) {
+      newY = rectWorkzone.height ;
     }
 
     activePiece.style.left = newX + "px";
