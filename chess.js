@@ -25,10 +25,45 @@ recruitZone.style.width = `${CanvasSize}px`;
 recruitZone.style.height = pieces[0].height * 2 + "px";
 
 // Раздел игровой доски
-let chess_state = {
-  1: {},
-  2: {},
-  3: {},
+const boardState = {
+    //coordinates span from 0 to 1
+  // White pieces
+  "wR1": { type: "rook",   color: "white", x: 0.5/8, y: 0.5/8 },
+  "wN1": { type: "knight", color: "white", x: 1.5/8, y: 0.5/8 },
+  "wB1": { type: "bishop", color: "white", x: 2.5/8, y: 0.5/8 },
+  "wQ":  { type: "queen",  color: "white", x: 3.5/8, y: 0.5/8 },
+  "wK":  { type: "king",   color: "white", x: 4.5/8, y: 0.5/8 },
+  "wB2": { type: "bishop", color: "white", x: 5.5/8, y: 0.5/8 },
+  "wN2": { type: "knight", color: "white", x: 6.5/8, y: 0.5/8 },
+  "wR2": { type: "rook",   color: "white", x: 7.5/8, y: 0.5/8 },
+
+  "wP1": { type: "pawn", color: "white", x: 0.5/8, y: 1.5/8 },
+  "wP2": { type: "pawn", color: "white", x: 1.5/8, y: 1.5/8 },
+  "wP3": { type: "pawn", color: "white", x: 2.5/8, y: 1.5/8 },
+  "wP4": { type: "pawn", color: "white", x: 3.5/8, y: 1.5/8 },
+  "wP5": { type: "pawn", color: "white", x: 4.5/8, y: 1.5/8 },
+  "wP6": { type: "pawn", color: "white", x: 5.5/8, y: 1.5/8 },
+  "wP7": { type: "pawn", color: "white", x: 6.5/8, y: 1.5/8 },
+  "wP8": { type: "pawn", color: "white", x: 7.5/8, y: 1.5/8 },
+
+  // Black pieces
+  "bR1": { type: "rook",   color: "black", x: 0.5/8, y: 7.5/8 },
+  "bN1": { type: "knight", color: "black", x: 1.5/8, y: 7.5/8 },
+  "bB1": { type: "bishop", color: "black", x: 2.5/8, y: 7.5/8 },
+  "bQ":  { type: "queen",  color: "black", x: 3.5/8, y: 7.5/8 },
+  "bK":  { type: "king",   color: "black", x: 4.5/8, y: 7.5/8 },
+  "bB2": { type: "bishop", color: "black", x: 5.5/8, y: 7.5/8 },
+  "bN2": { type: "knight", color: "black", x: 6.5/8, y: 7.5/8 },
+  "bR2": { type: "rook",   color: "black", x: 7.5/8, y: 7.5/8 },
+
+  "bP1": { type: "pawn", color: "black", x: 0.5/8, y: 6.5/8 },
+  "bP2": { type: "pawn", color: "black", x: 1.5/8, y: 6.5/8 },
+  "bP3": { type: "pawn", color: "black", x: 2.5/8, y: 6.5/8 },
+  "bP4": { type: "pawn", color: "black", x: 3.5/8, y: 6.5/8 },
+  "bP5": { type: "pawn", color: "black", x: 4.5/8, y: 6.5/8 },
+  "bP6": { type: "pawn", color: "black", x: 5.5/8, y: 6.5/8 },
+  "bP7": { type: "pawn", color: "black", x: 6.5/8, y: 6.5/8 },
+  "bP8": { type: "pawn", color: "black", x: 7.5/8, y: 6.5/8 }
 };
 
 function drawSquare(i, j, width) {
@@ -52,7 +87,12 @@ function FillChessBackground() {
 }
 FillChessBackground();
 
-function PlaceStartingPieces() {}
+function PlaceStartingPieces() {
+    for (const key in boardState) {
+        const piece = boardState[key];
+        console.log(key, piece);
+    }
+}
 //PlaceStartingPieces();
 
 // Раздел подключения по сети
