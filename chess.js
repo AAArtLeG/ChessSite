@@ -117,18 +117,69 @@ FillChessBackground();
 
 
 
-// Раздел подключения по сети
-function generate_peer() {
+// Connection section
   //instruction in https://peerjs.com/
-  var peer = new Peer();
-  const IDdisplay = document.getElementById("IDdisplay");
-  IDdisplay.style.width = CanvasSize + "px";
-  IDdisplay.textContent = "Generating peer ID...";
-  peer.on("open", function (id) {
-    IDdisplay.textContent = "My peer ID is: " + id;
-  });
+let my_id = null;
+let conn; //dataConnection object
+let peer;
+function generate_peer() {
+    if (peer) { //if exists
+        peer.destroy();  // closes connections, removes listeners
+        peer = null;
+        my_id = null;
+    }
+    peer = new Peer();
+    const IDdisplay = document.getElementById("IDdisplay");
+    document.getElementById("coverBox").style.zIndex = +1;
+    document.getElementById("coverBox").style.display = "block";
+    
+    IDdisplay.style.width = CanvasSize + "px";
+    IDdisplay.textContent = "Generating peer ID...";
+    peer.on("open", function (id) {
+        my_id = id;
+        IDdisplay.textContent = "My peer ID is: " + id;
+    });
+    peer.on("error", (err) => console.error("Peer error:", err));
+    
+    peer.on('connection', function(conn) {
+        conn.on('data', function(data){
+            if( typeof data === "object"){
+                console.log(data);
+                boardState = data;
+                PlacePieces(boardState);
+                setTimeout(() => make_pieces_responsive(), 0);
+            }else if (typeof data === "string") {
+                console.log("Chat:", data);
+            }
+        });
+    });
 }
 generate_peer();
+function connect_to_host(friend_id){ //unfiltered
+    conn = peer.connect(friend_id);
+    conn.on('open', function(){
+        conn.send('hi!');
+    });
+    conn.on('data', function(data){
+            if( typeof data === "object"){
+                console.log(data);
+                boardState = data;
+                PlacePieces(boardState);
+                setTimeout(() => make_pieces_responsive(), 0);
+            }else if (typeof data === "string") {
+                console.log("Chat:", data);
+            }
+        });
+}
+function send_state(){
+    if (conn && conn.open) {
+        conn.send(boardState);
+    }
+}
+function send_chat(string){
+    if (conn && conn.open) {conn.send(string);}
+}
+// end of connection section
 
 //move chess piece section
 let positionOfCursorFromPieceX = 0;
@@ -186,10 +237,13 @@ function eventOnMouseUp(e) {
   activePiece = null;
 }
 
-pieces.forEach((piece) => {
-  piece.style.cursor = "grab";
-  piece.addEventListener("mousedown", eventOnMouseDown);
-});
+function make_pieces_responsive(){ //will be called with each new board
+    pieces.forEach((piece) => {
+      piece.style.cursor = "grab";
+      piece.addEventListener("mousedown", eventOnMouseDown);
+    });
+}
+make_pieces_responsive();
 
 document.addEventListener("mousemove", eventOnMouseMove);
 
