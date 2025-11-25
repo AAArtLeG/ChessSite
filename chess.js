@@ -231,6 +231,8 @@ function eventOnMouseUp(e) {
 
   isMoving = false;
 
+  const rect = recruitZone.getBoundingClientRect();
+
   if (
     e.clientX > rect.left &&
     e.clientY > rect.top &&
