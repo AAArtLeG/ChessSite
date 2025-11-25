@@ -114,7 +114,21 @@ function FillChessBackground() {
   }
 }
 FillChessBackground();
-
+function snapBoard(boardState, softsnapping) {
+    if (!softSnapping) return boardState;
+    const snapped = {};
+    for (const key in boardState) {
+        const piece = boardState[key];
+        const xIndex = Math.round(piece.x * 8 - 0.5); //0..7
+        const yIndex = Math.round(piece.y * 8 - 0.5);
+        snapped[key] = {
+            ...piece, //copy properties of piece
+            x: (xIndex + 0.5) / 8,
+            y: (yIndex + 0.5) / 8
+        };
+    }
+    return snapped;
+}
 
 
 // Connection section
@@ -180,6 +194,8 @@ function send_chat(string){
     if (conn && conn.open) {conn.send(string);}
 }
 // end of connection section
+
+
 
 //move chess piece section
 let positionOfCursorFromPieceX = 0;
