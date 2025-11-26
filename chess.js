@@ -22,7 +22,7 @@ workzone.style.width = CanvasSize + "px";
 
 const recruitZone = document.getElementById("recruit");
 recruitZone.style.width = `${CanvasSize}px`;
-recruitZone.style.height = canvas.height / 8 + "px";
+recruitZone.style.height = `${CanvasSize / 2}px`;
 
 // Раздел игровой доски
 const boardState = {
@@ -78,13 +78,31 @@ function PlacePieces(boardState) {
 
     const board = document.getElementById("ChessBoard");
     const rect = board.getBoundingClientRect();
-    const px = piece.x * rect.width;
-    const py = (1 - piece.y) * rect.height;
+    let px = piece.x * rect.width;
+    let py = (1 - piece.y) * rect.height;
     el.style.left = px + "px";
     el.style.top = py + "px";
     el.style.position = "absolute";
     el.dataset.id = key;
     set.appendChild(el);
+
+    const el2 = document.createElement("div");
+    el2.classList.add("chess-piece", piece.color, piece.type, "fromRZ"); //adding classes to div object
+    el2.setAttribute("draggable", "false");
+
+    if (key < 17) {
+      px = piece.x * rect.width;
+      py = (1 - piece.y) * rect.height + rect.height / 2;
+    } else {
+      px = piece.x * rect.width;
+      py = (1 - piece.y) * rect.height + rect.height;
+    }
+
+    el2.style.left = px + "px";
+    el2.style.top = py + "px";
+    el2.style.position = "absolute";
+    el2.dataset.id = key;
+    set.appendChild(el2);
   }
 }
 PlacePieces(boardState);
@@ -111,21 +129,20 @@ function FillChessBackground() {
 }
 FillChessBackground();
 function snapBoard(boardState, softsnapping) {
-    if (!softSnapping) return boardState;
-    const snapped = {};
-    for (const key in boardState) {
-        const piece = boardState[key];
-        const xIndex = Math.round(piece.x * 8 - 0.5); //0..7
-        const yIndex = Math.round(piece.y * 8 - 0.5);
-        snapped[key] = {
-            ...piece, //copy properties of piece
-            x: (xIndex + 0.5) / 8,
-            y: (yIndex + 0.5) / 8
-        };
-    }
-    return snapped;
+  if (!softSnapping) return boardState;
+  const snapped = {};
+  for (const key in boardState) {
+    const piece = boardState[key];
+    const xIndex = Math.round(piece.x * 8 - 0.5); //0..7
+    const yIndex = Math.round(piece.y * 8 - 0.5);
+    snapped[key] = {
+      ...piece, //copy properties of piece
+      x: (xIndex + 0.5) / 8,
+      y: (yIndex + 0.5) / 8,
+    };
+  }
+  return snapped;
 }
-
 
 // Connection section
 //instruction in https://peerjs.com/
@@ -195,8 +212,6 @@ function send_chat(string) {
 }
 // end of connection section
 
-
-
 //move chess piece section
 let positionOfCursorFromPieceX = 0;
 let positionOfCursorFromPieceY = 0;
@@ -250,14 +265,75 @@ function eventOnMouseUp(e) {
   isMoving = false;
 
   const rect = recruitZone.getBoundingClientRect();
-
+  const rectBoard = document
+    .getElementById("ChessBoard")
+    .getBoundingClientRect();
+  const rectWorkzone = workzone.getBoundingClientRect();
   if (
+    !activePiece.classList.contains("fromRZ") &&
     e.clientX > rect.left &&
     e.clientY > rect.top &&
     e.clientX < rect.right &&
     e.clientY < rect.bottom
   ) {
     activePiece.parentNode.removeChild(activePiece);
+    activePiece = null;
+    return;
+  }
+
+  if (activePiece.classList.contains("fromRZ")) {
+    const key = activePiece.dataset.id;
+
+    if (
+      !(
+        e.clientX > rect.left &&
+        e.clientY > rect.top &&
+        e.clientX < rect.right &&
+        e.clientY < rect.bottom
+      ) &&
+      e.clientX > rectWorkzone.left &&
+      e.clientY > rectWorkzone.top &&
+      e.clientX < rectWorkzone.right &&
+      e.clientY < rectWorkzone.bottom
+    ) {
+      const piece = boardState[key];
+
+      const el = document.createElement("div");
+      el.classList.add("chess-piece", piece.color, piece.type);
+      el.setAttribute("draggable", "false");
+
+      const board = document.getElementById("ChessBoard");
+      const rect = board.getBoundingClientRect();
+      const rectWork = workzone.getBoundingClientRect();
+      let px = e.clientX - rectWork.left;
+      let py = e.clientY - rectWork.top;
+      el.style.left = px + "px";
+      el.style.top = py + "px";
+      el.style.position = "absolute";
+      el.dataset.id = key;
+      document.getElementById("ChessSet").appendChild(el);
+      el.style.cursor = "grab";
+      el.addEventListener("mousedown", eventOnMouseDown);
+
+      //checkers
+      /*
+      console.log("new piece:", el);
+      console.log("isConnected:", el.isConnected);
+      console.log("parent:", el.parentNode);
+      */
+    }
+    if (key < 17) {
+      px = boardState[key].x * rectBoard.width;
+      py = (1 - boardState[key].y) * rectBoard.height + rectBoard.height / 2;
+    } else {
+      px = boardState[key].x * rectBoard.width;
+      py = (1 - boardState[key].y) * rectBoard.height + rectBoard.height;
+    }
+    activePiece.style.left = px + "px";
+    activePiece.style.top = py + "px";
+    activePiece.style.position = "absolute";
+
+    activePiece.style.cursor = "grab";
     activePiece = null;
     return;
   }
