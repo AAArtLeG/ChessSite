@@ -1,5 +1,5 @@
 const softSnapping = false;
-const canvas = document.getElementById("ChessBoard");
+const canvas = document.getElementById("ChessBoard"); 
 const chessSet = document.getElementById("ChessSet");
 const ctx = canvas.getContext("2d");
 const workzone = document.getElementById("workzone");
@@ -21,10 +21,12 @@ chessSet.style.height = CanvasSize + "px";
 workzone.style.width = CanvasSize + "px";
 
 const recruitZone = document.getElementById("recruit");
+const recruitlines = 2; //to allow adding more pieces
 recruitZone.style.width = `${CanvasSize}px`;
-recruitZone.style.height = `${CanvasSize / 2}px`;
+recruitZone.style.height = `${CanvasSize / 8 * recruitlines}px`;
 
 // Раздел игровой доски
+let nextPieceId = 33;
 const boardState = {
   //coordinates span from 0 to 1
   // White pieces
@@ -70,7 +72,7 @@ function PlacePieces(boardState) {
 
   for (const key in boardState) {
     const piece = boardState[key];
-    console.log(key, piece);
+    //console.log(key, piece);
 
     const el = document.createElement("div");
     el.classList.add("chess-piece", piece.color, piece.type); //adding classes to div object
@@ -85,27 +87,53 @@ function PlacePieces(boardState) {
     el.style.position = "absolute";
     el.dataset.id = key;
     set.appendChild(el);
-
-    const el2 = document.createElement("div");
-    el2.classList.add("chess-piece", piece.color, piece.type, "fromRZ"); //adding classes to div object
-    el2.setAttribute("draggable", "false");
-
-    if (key < 17) {
-      px = piece.x * rect.width;
-      py = (1 - piece.y) * rect.height + rect.height / 2;
-    } else {
-      px = piece.x * rect.width;
-      py = (1 - piece.y) * rect.height + rect.height;
-    }
-
-    el2.style.left = px + "px";
-    el2.style.top = py + "px";
-    el2.style.position = "absolute";
-    el2.dataset.id = key;
-    set.appendChild(el2);
   }
 }
 PlacePieces(boardState);
+
+const recruitState = {
+  1: { type: "pawn", color: "white", x: 0.5 / 8, y: 0.5 / recruitlines},
+  2: { type: "knight", color: "white", x: 1.5 / 8, y: 0.5 / recruitlines },
+  3: { type: "bishop", color: "white", x: 2.5 / 8, y: 0.5 / recruitlines },
+  4: { type: "rook", color: "white", x: 3.5 / 8, y: 0.5 / recruitlines },
+  5: { type: "queen", color: "white", x: 4.5 / 8, y: 0.5 / recruitlines },
+  6: { type: "king", color: "white", x: 5.5 / 8, y: 0.5 / recruitlines },
+  
+  7: { type: "pawn", color: "black", x: 0.5 / 8, y: 1.5 / recruitlines },
+  8: { type: "knight", color: "black", x: 1.5 / 8, y: 1.5 / recruitlines },
+  9: { type: "bishop", color: "black", x: 2.5 / 8, y: 1.5 / recruitlines },
+  10: { type: "rook", color: "black", x: 3.5 / 8, y: 1.5 / recruitlines },
+  11: { type: "queen", color: "black", x: 4.5 / 8, y: 1.5 / recruitlines },
+  12: { type: "king", color: "black", x: 5.5 / 8, y: 1.5 / recruitlines },
+  // duck piece to be added here later
+}
+function PlaceRecruits(recruitState){
+  const set = document.getElementById("recruit");
+  for (const key in recruitState) {
+    const piece = recruitState[key];
+    
+    const el = document.createElement("div");
+    const board = document.getElementById("ChessBoard");
+    const rectBoard = board.getBoundingClientRect();
+    
+    const recruitZone = document.getElementById("recruit");
+    const rectRecruit = recruitZone.getBoundingClientRect();
+    
+    el.classList.add("chess-piece", piece.color, piece.type, "recruit-piece"); 
+    el.setAttribute("draggable", "false");
+
+    let px = piece.x * rectRecruit.width;
+    let py = piece.y * rectRecruit.height + rectBoard.height;
+
+    el.style.left = px + "px";
+    el.style.top = py + "px";
+    el.style.position = "absolute";
+    el.dataset.id = key;
+    set.appendChild(el);
+  }
+}
+PlaceRecruits(recruitState);
+
 const pieces = document.querySelectorAll(".chess-piece"); //has to be created after board setup
 
 function drawSquare(i, j, width) {
@@ -213,24 +241,44 @@ function send_chat(string) {
 // end of connection section
 
 //move chess piece section
-let positionOfCursorFromPieceX = 0;
-let positionOfCursorFromPieceY = 0;
+//let positionOfCursorFromPieceX = 0;
+//let positionOfCursorFromPieceY = 0;
+function pointInRect(x, y, rect) { //reusable condition
+  return (
+    x > rect.left &&
+    x < rect.right &&
+    y > rect.top &&
+    y < rect.bottom
+  );
+}
 let isMoving = false;
 let activePiece = null;
 
 function eventOnMouseDown(e) {
   e.preventDefault(); // for prevent drag-click
-
   isMoving = true;
-  activePiece = e.currentTarget;
+  const original = e.currentTarget; //for both normal and recruit piece
 
+  if (original.classList.contains("recruit-piece")) {
+    // clone recruit piece, instead of moving the original
+    const clone = original.cloneNode(true);
+    const id = nextPieceId++;
+    clone.dataset.id = id;
+    clone.classList.remove("recruit-piece");
+    clone.addEventListener("mousedown", eventOnMouseDown);
+    document.getElementById("workzone").appendChild(clone);
+    activePiece = clone;
+    
+    boardState[id] = {
+      type: original.dataset.type,
+      color: original.dataset.color,
+      x: original.offsetLeft,
+      y: original.offsetTop,
+    };
+  } else {
+    activePiece = original;
+  }
   activePiece.style.cursor = "grabbing";
-
-  const rectPiece = activePiece.getBoundingClientRect();
-
-  //позиция курсора, относительно левого верхнего угла img фигуры
-  positionOfCursorFromPieceX = e.clientX - rectPiece.x;
-  positionOfCursorFromPieceY = e.clientY - rectPiece.y;
 }
 
 function eventOnMouseMove(e) {
@@ -238,21 +286,16 @@ function eventOnMouseMove(e) {
     const rectWorkzone = workzone.getBoundingClientRect();
 
     //координаты точки начала рисования картинки, относительно relative контейнера, в котором находимся, теперь workzone
-    let newX = e.clientX - rectWorkzone.x; // - positionOfCursorFromPieceX
-    let newY = e.clientY - rectWorkzone.y; // - positionOfCursorFromPieceY
+    let newX = e.clientX - rectWorkzone.x; 
+    let newY = e.clientY - rectWorkzone.y; 
 
-    if (newX < 0) {
-      newX = 0;
-    }
-    if (newX > rectWorkzone.width) {
-      newX = rectWorkzone.width;
-    }
-    if (newY < 0) {
-      newY = 0;
-    }
-    if (newY > rectWorkzone.height) {
-      newY = rectWorkzone.height;
-    }
+    if (newX < 0) { newX = 0; }
+    if (newX > rectWorkzone.width) { newX = rectWorkzone.width; }
+    if (newY < 0) { newY = 0; }
+    if (newY > rectWorkzone.height) { newY = rectWorkzone.height; }
+    
+    boardState[activePiece.dataset.id].x = newX/rectWorkzone.width;
+    boardState[activePiece.dataset.id].y = newY/rectWorkzone.width;
 
     activePiece.style.left = newX + "px";
     activePiece.style.top = newY + "px";
@@ -264,80 +307,17 @@ function eventOnMouseUp(e) {
 
   isMoving = false;
 
-  const rect = recruitZone.getBoundingClientRect();
-  const rectBoard = document
-    .getElementById("ChessBoard")
-    .getBoundingClientRect();
   const rectWorkzone = workzone.getBoundingClientRect();
-  if (
-    !activePiece.classList.contains("fromRZ") &&
-    e.clientX > rect.left &&
-    e.clientY > rect.top &&
-    e.clientX < rect.right &&
-    e.clientY < rect.bottom
-  ) {
-    activePiece.parentNode.removeChild(activePiece);
-    activePiece = null;
-    return;
-  }
+  const rectRecruit = recruitZone.getBoundingClientRect();
 
-  if (activePiece.classList.contains("fromRZ")) {
+  // If dropped in recruitzone then delete
+  if ( pointInRect(e.clientX, e.clientY, rectRecruit) ) {
     const key = activePiece.dataset.id;
-
-    if (
-      !(
-        e.clientX > rect.left &&
-        e.clientY > rect.top &&
-        e.clientX < rect.right &&
-        e.clientY < rect.bottom
-      ) &&
-      e.clientX > rectWorkzone.left &&
-      e.clientY > rectWorkzone.top &&
-      e.clientX < rectWorkzone.right &&
-      e.clientY < rectWorkzone.bottom
-    ) {
-      const piece = boardState[key];
-
-      const el = document.createElement("div");
-      el.classList.add("chess-piece", piece.color, piece.type);
-      el.setAttribute("draggable", "false");
-
-      const board = document.getElementById("ChessBoard");
-      const rect = board.getBoundingClientRect();
-      const rectWork = workzone.getBoundingClientRect();
-      let px = e.clientX - rectWork.left;
-      let py = e.clientY - rectWork.top;
-      el.style.left = px + "px";
-      el.style.top = py + "px";
-      el.style.position = "absolute";
-      el.dataset.id = key;
-      document.getElementById("ChessSet").appendChild(el);
-      el.style.cursor = "grab";
-      el.addEventListener("mousedown", eventOnMouseDown);
-
-      //checkers
-      /*
-      console.log("new piece:", el);
-      console.log("isConnected:", el.isConnected);
-      console.log("parent:", el.parentNode);
-      */
-    }
-    if (key < 17) {
-      px = boardState[key].x * rectBoard.width;
-      py = (1 - boardState[key].y) * rectBoard.height + rectBoard.height / 2;
-    } else {
-      px = boardState[key].x * rectBoard.width;
-      py = (1 - boardState[key].y) * rectBoard.height + rectBoard.height;
-    }
-    activePiece.style.left = px + "px";
-    activePiece.style.top = py + "px";
-    activePiece.style.position = "absolute";
-
-    activePiece.style.cursor = "grab";
+    activePiece.parentNode.removeChild(activePiece);
+    if (boardState[key]) delete boardState[key];
     activePiece = null;
     return;
   }
-
   activePiece.style.cursor = "grab";
   activePiece = null;
 }
@@ -356,13 +336,6 @@ document.addEventListener("mousemove", eventOnMouseMove);
 document.addEventListener("mouseup", eventOnMouseUp);
 
 document.getElementById("buttonForTakeTextFromFname").onclick = function () {
-  /*  */
-  //const inputTextElem = document.getElementById("fname");
-  //console.log(inputTextElem.value);
-  //const header1Forname = document.getElementById("myName");
-  //header1Forname.innerHTML = inputTextElem.value;
-
-  //document.getElementById("buttonForTakeTextFromFname").style.height = "90px";
   document.getElementById("coverBox").style.zIndex = -1;
   document.getElementById("coverBox").style.display = "none";
 };
