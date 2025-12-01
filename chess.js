@@ -213,6 +213,9 @@ function generate_peer() {
   });
 }
 generate_peer();
+function handle_recieved_message(data){
+    
+}
 function connect_to_host(friend_id) {
   //unfiltered
   conn = peer.connect(friend_id);
@@ -223,6 +226,7 @@ function connect_to_host(friend_id) {
     if (typeof data === "object") {
       console.log(data);
       boardState = data;
+      //
       PlacePieces(boardState);
       setTimeout(() => make_pieces_responsive(), 0);
     } else if (typeof data === "string") {
@@ -232,7 +236,11 @@ function connect_to_host(friend_id) {
 }
 function send_state() {
   if (conn && conn.open) {
-    conn.send(boardState);
+    const message = {
+        type: "board",
+        contents: boardState
+    };
+    conn.send(message);
   }
 }
 function send_chat(string) {
@@ -303,6 +311,7 @@ function eventOnMouseMove(e) {
 
     activePiece.style.left = newX + "px";
     activePiece.style.top = newY + "px";
+    send_state();
   }
 }
 
