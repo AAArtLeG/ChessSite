@@ -205,7 +205,7 @@ function generate_peer() {
 }
 generate_peer();
 function handle_recieved_message(data){
-    if (data[type]=== "board"){
+    if (data.type === "board"){
         console.log(data);
         boardState = data[contents];
         //delete all active pieces before adding new
@@ -214,7 +214,7 @@ function handle_recieved_message(data){
         setTimeout(() => make_pieces_responsive(), 0);
         return;
     }
-    if (data[type]=== "mouse"){
+    if (data.type === "mouse"){
         
         return;
     }
@@ -222,9 +222,10 @@ function handle_recieved_message(data){
 function connect_to_host(friend_id) {
   //unfiltered
   conn = peer.connect(friend_id);
-  //conn.on("open", function () {
-  //  conn.send("hi!");
-  //});
+  conn.on("open", function () {
+    conn.send("hi!");
+    console.log("connection started");
+  });
   conn.on("data", (data) => handle_recieved_message(data));
 }
 function send_state() {
