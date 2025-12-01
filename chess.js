@@ -27,7 +27,7 @@ recruitZone.style.height = `${CanvasSize / 8 * recruitlines}px`;
 
 // Раздел игровой доски
 let nextPieceId = 33;
-const boardState = {
+let boardState = {
   //coordinates span from 0 to 1
   // White pieces
   1: { type: "rook", color: "white", x: 0.5 / 8, y: 0.5 / 8 },
@@ -90,6 +90,12 @@ function PlacePieces(boardState) {
   }
 }
 PlacePieces(boardState);
+function delete_all_pieces(){
+    const workzonePieces = document.querySelectorAll(
+            "#workzone .chess-piece:not(#recruit .chess-piece)"
+    );
+    workzonePieces.forEach(el => el.remove());
+}
 
 const recruitState = {
   1: { type: "pawn", color: "white", x: 0.5 / 8, y: 0.5 / recruitlines},
@@ -200,18 +206,20 @@ function generate_peer() {
   peer.on("error", (err) => console.error("Peer error:", err));
 
   peer.on("connection", function (conn) {
+    document.getElementById("coverBox").style.zIndex = -1;
+    document.getElementById("coverBox").style.display = "none";
     conn.on("data", (data)=>handle_recieved_message(data));
   });
 }
 generate_peer();
 function handle_recieved_message(data){
+    console.log(data);
     if (data.type === "board"){
-        console.log(data);
-        boardState = data[contents];
-        //delete all active pieces before adding new
-        
+        boardState = data.contents;
+        delete_all_pieces();
         PlacePieces(boardState);
-        setTimeout(() => make_pieces_responsive(), 0);
+        //make_pieces_responsive();
+        setTimeout(() => make_pieces_responsive(), 1);
         return;
     }
     if (data.type === "mouse"){
