@@ -200,21 +200,24 @@ function generate_peer() {
   peer.on("error", (err) => console.error("Peer error:", err));
 
   peer.on("connection", function (conn) {
-    conn.on("data", function (data) {
-      if (typeof data === "object") {
-        console.log(data);
-        boardState = data;
-        PlacePieces(boardState);
-        setTimeout(() => make_pieces_responsive(), 0);
-      } else if (typeof data === "string") {
-        console.log("Chat:", data);
-      }
-    });
+    conn.on("data", handle_recieved_message(data));
   });
 }
 generate_peer();
 function handle_recieved_message(data){
-    
+    if (data[type]=== "board"){
+        console.log(data);
+        boardState = data[contents];
+        //delete all active pieces before adding new
+        
+        PlacePieces(boardState);
+        setTimeout(() => make_pieces_responsive(), 0);
+        return;
+    }
+    if (data[type]=== "mouse"){
+        
+        return;
+    }
 }
 function connect_to_host(friend_id) {
   //unfiltered
@@ -222,17 +225,7 @@ function connect_to_host(friend_id) {
   conn.on("open", function () {
     conn.send("hi!");
   });
-  conn.on("data", function (data) {
-    if (typeof data === "object") {
-      console.log(data);
-      boardState = data;
-      //
-      PlacePieces(boardState);
-      setTimeout(() => make_pieces_responsive(), 0);
-    } else if (typeof data === "string") {
-      console.log("Chat:", data);
-    }
-  });
+  conn.on("data", handle_recieved_message(data));
 }
 function send_state() {
   if (conn && conn.open) {
