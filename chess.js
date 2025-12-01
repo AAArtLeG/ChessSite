@@ -81,7 +81,7 @@ function PlacePieces(boardState) {
     const board = document.getElementById("ChessBoard");
     const rect = board.getBoundingClientRect();
     let px = piece.x * rect.width;
-    let py = (1 - piece.y) * rect.height;
+    let py = piece.y * rect.height;
     el.style.left = px + "px";
     el.style.top = py + "px";
     el.style.position = "absolute";
