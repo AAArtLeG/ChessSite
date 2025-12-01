@@ -129,6 +129,8 @@ function PlaceRecruits(recruitState){
     el.style.top = py + "px";
     el.style.position = "absolute";
     el.dataset.id = key;
+    el.dataset.type = piece.type;
+    el.dataset.color = piece.color;
     set.appendChild(el);
   }
 }
@@ -335,7 +337,15 @@ document.addEventListener("mousemove", eventOnMouseMove);
 
 document.addEventListener("mouseup", eventOnMouseUp);
 
-document.getElementById("buttonForTakeTextFromFname").onclick = function () {
+document.getElementById("buttonLogin").onclick = function () {
+  const input = document.getElementById("inputCode").value.trim();
+  
   document.getElementById("coverBox").style.zIndex = -1;
   document.getElementById("coverBox").style.display = "none";
+  
+  if (input === "") {
+    //starting Solo
+  } else {
+    // starting connection to host
+  }
 };
