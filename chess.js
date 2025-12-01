@@ -268,6 +268,8 @@ function eventOnMouseDown(e) {
     clone.dataset.id = id;
     clone.classList.remove("recruit-piece");
     clone.addEventListener("mousedown", eventOnMouseDown);
+    clone.addEventListener("touchstart", (e) => eventOnMouseDown(normalizeEvent(e)));
+    
     document.getElementById("workzone").appendChild(clone);
     activePiece = clone;
     
@@ -329,13 +331,35 @@ function make_pieces_responsive() {
   pieces.forEach((piece) => {
     piece.style.cursor = "grab";
     piece.addEventListener("mousedown", eventOnMouseDown);
+    piece.addEventListener("touchstart", (e) => eventOnMouseDown(normalizeEvent(e)));
   });
 }
 make_pieces_responsive();
 
+function normalizeEvent(e){
+  // take touchpad or mouse event
+  // if touch, then reformat like it was a mouse
+  let x, y;
+  if (e.touches && e.touches.length > 0) {
+    x = e.touches[0].clientX;
+    y = e.touches[0].clientY;
+  } else {
+    x = e.clientX;
+    y = e.clientY;
+  }
+  return {
+    ...e,
+    clientX: x,
+    clientY: y,
+    //currentTarget: e.currentTarget
+  };
+}
+
 document.addEventListener("mousemove", eventOnMouseMove);
+document.addEventListener("touchmove", (e) => eventOnMouseDown(normalizeEvent(e)));
 
 document.addEventListener("mouseup", eventOnMouseUp);
+document.addEventListener("touchend", (e) => eventOnMouseUp(normalizeEvent(e)));
 
 document.getElementById("buttonLogin").onclick = function () {
   const input = document.getElementById("inputCode").value.trim();
