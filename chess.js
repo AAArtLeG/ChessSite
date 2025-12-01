@@ -200,7 +200,7 @@ function generate_peer() {
   peer.on("error", (err) => console.error("Peer error:", err));
 
   peer.on("connection", function (conn) {
-    conn.on("data", handle_recieved_message(data));
+    conn.on("data", (data)=>handle_recieved_message(data));
   });
 }
 generate_peer();
@@ -222,10 +222,10 @@ function handle_recieved_message(data){
 function connect_to_host(friend_id) {
   //unfiltered
   conn = peer.connect(friend_id);
-  conn.on("open", function () {
-    conn.send("hi!");
-  });
-  conn.on("data", handle_recieved_message(data));
+  //conn.on("open", function () {
+  //  conn.send("hi!");
+  //});
+  conn.on("data", (data) => handle_recieved_message(data));
 }
 function send_state() {
   if (conn && conn.open) {
@@ -364,14 +364,16 @@ document.addEventListener("mouseup", eventOnMouseUp);
 document.addEventListener("touchend", (e) => eventOnMouseUp(normalizeEvent(e)));
 
 document.getElementById("buttonLogin").onclick = function () {
-  const input = document.getElementById("inputCode").value.trim();
-  
+  const friend_id = document.getElementById("inputCode").value.trim();
+
   document.getElementById("coverBox").style.zIndex = -1;
   document.getElementById("coverBox").style.display = "none";
   
-  if (input === "") {
+  if (friend_id === "") {
     //starting Solo
+    //nothing happens
   } else {
     // starting connection to host
+    connect_to_host(friend_id);
   }
 };
