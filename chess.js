@@ -356,7 +356,7 @@ function normalizeEvent(e){
 }
 
 document.addEventListener("mousemove", eventOnMouseMove);
-document.addEventListener("touchmove", (e) => eventOnMouseDown(normalizeEvent(e)));
+document.addEventListener("touchmove", (e) => eventOnMouseMove(normalizeEvent(e)));
 
 document.addEventListener("mouseup", eventOnMouseUp);
 document.addEventListener("touchend", (e) => eventOnMouseUp(normalizeEvent(e)));
