@@ -1,11 +1,10 @@
-const snapMode;
-let snapModes = Object.freeze({
+const snapModes = Object.freeze({
     NONE: 0, //
     CONSTRAINED: 1, //pieces can't hang over an edge
     ALL: 2, //piece is snapped to center of edges, corners, centers of spaces
     CLASSIC: 3, //piece is snapped to centers of spaces
 });
-snapMode = snapModes.CLASSIC;
+let snapMode = snapModes.CLASSIC;
 
 const canvas = document.getElementById("ChessBoard"); 
 const chessSet = document.getElementById("ChessSet");
