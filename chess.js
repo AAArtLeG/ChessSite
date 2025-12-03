@@ -1,4 +1,12 @@
-const softSnapping = false;
+const snapMode;
+let snapModes = Object.freeze({
+    NONE: 0, //
+    CONSTRAINED: 1, //pieces can't hang over an edge
+    ALL: 2, //piece is snapped to center of edges, corners, centers of spaces
+    CLASSIC: 3, //piece is snapped to centers of spaces
+});
+snapMode = snapModes.CLASSIC;
+
 const canvas = document.getElementById("ChessBoard"); 
 const chessSet = document.getElementById("ChessSet");
 const ctx = canvas.getContext("2d");
@@ -142,7 +150,7 @@ function PlaceRecruits(recruitState){
 }
 PlaceRecruits(recruitState);
 
-const pieces = document.querySelectorAll(".chess-piece"); //has to be created after board setup
+let pieces = document.querySelectorAll(".chess-piece"); //has to be created after board setup
 
 function drawSquare(i, j, width) {
   ctx.fillStyle = "#444400";
@@ -164,7 +172,7 @@ function FillChessBackground() {
   }
 }
 FillChessBackground();
-function snapBoard(boardState, softsnapping) {
+function snapBoard(boardState, softsnapping) { //to be changed
   if (!softSnapping) return boardState;
   const snapped = {};
   for (const key in boardState) {
@@ -205,10 +213,11 @@ function generate_peer() {
   });
   peer.on("error", (err) => console.error("Peer error:", err));
 
-  peer.on("connection", function (conn) {
+  peer.on("connection", function (connection) {
     document.getElementById("coverBox").style.zIndex = -1;
     document.getElementById("coverBox").style.display = "none";
-    conn.on("data", (data)=>handle_recieved_message(data));
+    connection.on("data", (data)=>handle_recieved_message(data));
+    conn = connection;
   });
 }
 generate_peer();
@@ -339,6 +348,7 @@ function eventOnMouseUp(e) {
 
 function make_pieces_responsive() {
   //will be called with each new board
+  let pieces = document.querySelectorAll(".chess-piece");
   pieces.forEach((piece) => {
     piece.style.cursor = "grab";
     piece.addEventListener("mousedown", eventOnMouseDown);
