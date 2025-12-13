@@ -118,7 +118,12 @@ const recruitState = {
   10: { type: "rook", color: "black", x: 3.5 / 8, y: 1.5 / recruitlines },
   11: { type: "queen", color: "black", x: 4.5 / 8, y: 1.5 / recruitlines },
   12: { type: "king", color: "black", x: 5.5 / 8, y: 1.5 / recruitlines },
-  // duck piece to be added here later
+  
+  //special pieces
+  13: { type: "duck", color: "none", x: 7.5 / 8, y: 0.5 / recruitlines },
+  14: { type: "crow", color: "none", x: 6.5 / 8, y: 0.5 / recruitlines },
+  15: { type: "beaver", color: "none", x: 6.5 / 8, y: 1.5 / recruitlines },
+  16: { type: "panda", color: "none", x: 7.5 / 8, y: 1.5 / recruitlines },
 }
 function PlaceRecruits(recruitState){
   const set = document.getElementById("recruit");
