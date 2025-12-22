@@ -401,6 +401,7 @@ function eventOnMouseUp(e) {
     activePiece.parentNode.removeChild(activePiece);
     if (boardState[key]) delete boardState[key];
     activePiece = null;
+    send_state();
     return;
   }
   activePiece.style.cursor = "grab";
