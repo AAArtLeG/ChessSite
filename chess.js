@@ -114,8 +114,12 @@ function PlacePiece(boardState, activePieceIdx) {
   el.style.left = px + "px";
   el.style.top = py + "px";
   el.style.position = "absolute";
-  el.dataset.id = key;
+  el.dataset.id = activePieceIdx;
   set.appendChild(el);
+
+  el.style.cursor = "grab";
+  el.addEventListener("mousedown", eventOnMouseDown);
+  el.addEventListener("touchstart", (e) => eventOnMouseDown(normalizeEvent(e)));
 }
 function delete_all_pieces() {
   const workzonePieces = document.querySelectorAll(
@@ -266,9 +270,8 @@ function handle_recieved_message(data) {
   }
   if (data.type === "pieceMove") {
     boardState = data.contents;
-    delete_piece(data.activePieceIdx);
-    PlacePiece(boardState, data.activePieceIdx);
-    setTimeout(() => make_pieces_responsive(), 1);
+    delete_piece(data.idx);
+    PlacePiece(boardState, data.idx);
     return;
   }
   if (data.type === "mouse") {
