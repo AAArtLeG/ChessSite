@@ -1,12 +1,12 @@
 const snapModes = Object.freeze({
-    NONE: 0, //
-    CONSTRAINED: 1, //pieces can't hang over an edge
-    ALL: 2, //piece is snapped to center of edges, corners, centers of spaces
-    CLASSIC: 3, //piece is snapped to centers of spaces
+  NONE: 0, //
+  CONSTRAINED: 1, //pieces can't hang over an edge
+  ALL: 2, //piece is snapped to center of edges, corners, centers of spaces
+  CLASSIC: 3, //piece is snapped to centers of spaces
 });
 let snapMode = snapModes.CLASSIC;
 
-const canvas = document.getElementById("ChessBoard"); 
+const canvas = document.getElementById("ChessBoard");
 const chessSet = document.getElementById("ChessSet");
 const ctx = canvas.getContext("2d");
 const workzone = document.getElementById("workzone");
@@ -30,7 +30,7 @@ workzone.style.width = CanvasSize + "px";
 const recruitZone = document.getElementById("recruit");
 const recruitlines = 2; //to allow adding more pieces
 recruitZone.style.width = `${CanvasSize}px`;
-recruitZone.style.height = `${CanvasSize / 8 * recruitlines}px`;
+recruitZone.style.height = `${(CanvasSize / 8) * recruitlines}px`;
 
 // Раздел игровой доски
 let nextPieceId = 33;
@@ -97,47 +97,75 @@ function PlacePieces(boardState) {
   }
 }
 PlacePieces(boardState);
-function delete_all_pieces(){
-    const workzonePieces = document.querySelectorAll(
-            "#workzone .chess-piece:not(#recruit .chess-piece)"
-    );
-    workzonePieces.forEach(el => el.remove());
+function PlacePiece(boardState, activePieceIdx) {
+  const set = document.getElementById("ChessSet");
+
+  const piece = boardState[activePieceIdx];
+  //console.log(key, piece);
+
+  const el = document.createElement("div");
+  el.classList.add("chess-piece", piece.color, piece.type); //adding classes to div object
+  el.setAttribute("draggable", "false");
+
+  const board = document.getElementById("ChessBoard");
+  const rect = board.getBoundingClientRect();
+  let px = piece.x * rect.width;
+  let py = piece.y * rect.height;
+  el.style.left = px + "px";
+  el.style.top = py + "px";
+  el.style.position = "absolute";
+  el.dataset.id = key;
+  set.appendChild(el);
+}
+function delete_all_pieces() {
+  const workzonePieces = document.querySelectorAll(
+    "#workzone .chess-piece:not(#recruit .chess-piece)"
+  );
+  workzonePieces.forEach((el) => el.remove());
+}
+
+function delete_piece(id) {
+  const selector = `#workzone .chess-piece[data-id="${id}"]`;
+  const el = document.querySelector(selector);
+  if (el) {
+    el.remove();
+  }
 }
 
 const recruitState = {
-  1: { type: "pawn", color: "white", x: 0.5 / 8, y: 0.5 / recruitlines},
+  1: { type: "pawn", color: "white", x: 0.5 / 8, y: 0.5 / recruitlines },
   2: { type: "knight", color: "white", x: 1.5 / 8, y: 0.5 / recruitlines },
   3: { type: "bishop", color: "white", x: 2.5 / 8, y: 0.5 / recruitlines },
   4: { type: "rook", color: "white", x: 3.5 / 8, y: 0.5 / recruitlines },
   5: { type: "queen", color: "white", x: 4.5 / 8, y: 0.5 / recruitlines },
   6: { type: "king", color: "white", x: 5.5 / 8, y: 0.5 / recruitlines },
-  
+
   7: { type: "pawn", color: "black", x: 0.5 / 8, y: 1.5 / recruitlines },
   8: { type: "knight", color: "black", x: 1.5 / 8, y: 1.5 / recruitlines },
   9: { type: "bishop", color: "black", x: 2.5 / 8, y: 1.5 / recruitlines },
   10: { type: "rook", color: "black", x: 3.5 / 8, y: 1.5 / recruitlines },
   11: { type: "queen", color: "black", x: 4.5 / 8, y: 1.5 / recruitlines },
   12: { type: "king", color: "black", x: 5.5 / 8, y: 1.5 / recruitlines },
-  
+
   //special pieces
   13: { type: "duck", color: "none", x: 7.5 / 8, y: 0.5 / recruitlines },
   14: { type: "crow", color: "none", x: 6.5 / 8, y: 0.5 / recruitlines },
   15: { type: "beaver", color: "none", x: 6.5 / 8, y: 1.5 / recruitlines },
   16: { type: "panda", color: "none", x: 7.5 / 8, y: 1.5 / recruitlines },
-}
-function PlaceRecruits(recruitState){
+};
+function PlaceRecruits(recruitState) {
   const set = document.getElementById("recruit");
   for (const key in recruitState) {
     const piece = recruitState[key];
-    
+
     const el = document.createElement("div");
     const board = document.getElementById("ChessBoard");
     const rectBoard = board.getBoundingClientRect();
-    
+
     const recruitZone = document.getElementById("recruit");
     const rectRecruit = recruitZone.getBoundingClientRect();
-    
-    el.classList.add("chess-piece", piece.color, piece.type, "recruit-piece"); 
+
+    el.classList.add("chess-piece", piece.color, piece.type, "recruit-piece");
     el.setAttribute("draggable", "false");
 
     let px = piece.x * rectRecruit.width;
@@ -176,7 +204,8 @@ function FillChessBackground() {
   }
 }
 FillChessBackground();
-function snapBoard(boardState, softsnapping) { //to be changed
+function snapBoard(boardState, softsnapping) {
+  //to be changed
   if (!softSnapping) return boardState;
   const snapped = {};
   for (const key in boardState) {
@@ -220,25 +249,31 @@ function generate_peer() {
   peer.on("connection", function (connection) {
     document.getElementById("coverBox").style.zIndex = -1;
     document.getElementById("coverBox").style.display = "none";
-    connection.on("data", (data)=>handle_recieved_message(data));
+    connection.on("data", (data) => handle_recieved_message(data));
     conn = connection;
   });
 }
 generate_peer();
-function handle_recieved_message(data){
-    console.log(data);
-    if (data.type === "board"){
-        boardState = data.contents;
-        delete_all_pieces();
-        PlacePieces(boardState);
-        //make_pieces_responsive();
-        setTimeout(() => make_pieces_responsive(), 1);
-        return;
-    }
-    if (data.type === "mouse"){
-        
-        return;
-    }
+function handle_recieved_message(data) {
+  console.log(data);
+  if (data.type === "board") {
+    boardState = data.contents;
+    delete_all_pieces();
+    PlacePieces(boardState);
+    //make_pieces_responsive();
+    setTimeout(() => make_pieces_responsive(), 1);
+    return;
+  }
+  if (data.type === "pieceMove") {
+    boardState = data.contents;
+    delete_piece(data.activePieceIdx);
+    PlacePiece(boardState, data.activePieceIdx);
+    setTimeout(() => make_pieces_responsive(), 1);
+    return;
+  }
+  if (data.type === "mouse") {
+    return;
+  }
 }
 function connect_to_host(friend_id) {
   //unfiltered
@@ -252,12 +287,24 @@ function connect_to_host(friend_id) {
 function send_state() {
   if (conn && conn.open) {
     const message = {
-        type: "board",
-        contents: boardState
+      type: "board",
+      contents: boardState,
     };
     conn.send(message);
   }
 }
+
+function send_piece(activePieceIdx) {
+  if (conn && conn.open) {
+    const message = {
+      type: "pieceMove",
+      contents: boardState,
+      idx: activePieceIdx,
+    };
+    conn.send(message);
+  }
+}
+
 function send_chat(string) {
   if (conn && conn.open) {
     conn.send(string);
@@ -268,13 +315,9 @@ function send_chat(string) {
 //move chess piece section
 //let positionOfCursorFromPieceX = 0;
 //let positionOfCursorFromPieceY = 0;
-function pointInRect(x, y, rect) { //reusable condition
-  return (
-    x > rect.left &&
-    x < rect.right &&
-    y > rect.top &&
-    y < rect.bottom
-  );
+function pointInRect(x, y, rect) {
+  //reusable condition
+  return x > rect.left && x < rect.right && y > rect.top && y < rect.bottom;
 }
 let isMoving = false;
 let activePiece = null;
@@ -291,11 +334,13 @@ function eventOnMouseDown(e) {
     clone.dataset.id = id;
     clone.classList.remove("recruit-piece");
     clone.addEventListener("mousedown", eventOnMouseDown);
-    clone.addEventListener("touchstart", (e) => eventOnMouseDown(normalizeEvent(e)));
-    
+    clone.addEventListener("touchstart", (e) =>
+      eventOnMouseDown(normalizeEvent(e))
+    );
+
     document.getElementById("workzone").appendChild(clone);
     activePiece = clone;
-    
+
     boardState[id] = {
       type: original.dataset.type,
       color: original.dataset.color,
@@ -313,20 +358,29 @@ function eventOnMouseMove(e) {
     const rectWorkzone = workzone.getBoundingClientRect();
 
     //координаты точки начала рисования картинки, относительно relative контейнера, в котором находимся, теперь workzone
-    let newX = e.clientX - rectWorkzone.x; 
-    let newY = e.clientY - rectWorkzone.y; 
+    let newX = e.clientX - rectWorkzone.x;
+    let newY = e.clientY - rectWorkzone.y;
 
-    if (newX < 0) { newX = 0; }
-    if (newX > rectWorkzone.width) { newX = rectWorkzone.width; }
-    if (newY < 0) { newY = 0; }
-    if (newY > rectWorkzone.height) { newY = rectWorkzone.height; }
-    
-    boardState[activePiece.dataset.id].x = newX/rectWorkzone.width;
-    boardState[activePiece.dataset.id].y = newY/rectWorkzone.width;
+    if (newX < 0) {
+      newX = 0;
+    }
+    if (newX > rectWorkzone.width) {
+      newX = rectWorkzone.width;
+    }
+    if (newY < 0) {
+      newY = 0;
+    }
+    if (newY > rectWorkzone.height) {
+      newY = rectWorkzone.height;
+    }
+
+    boardState[activePiece.dataset.id].x = newX / rectWorkzone.width;
+    boardState[activePiece.dataset.id].y = newY / rectWorkzone.width;
 
     activePiece.style.left = newX + "px";
     activePiece.style.top = newY + "px";
-    send_state();
+    //send_state();
+    send_piece(activePiece.dataset.id);
   }
 }
 
@@ -339,7 +393,7 @@ function eventOnMouseUp(e) {
   const rectRecruit = recruitZone.getBoundingClientRect();
 
   // If dropped in recruitzone then delete
-  if ( pointInRect(e.clientX, e.clientY, rectRecruit) ) {
+  if (pointInRect(e.clientX, e.clientY, rectRecruit)) {
     const key = activePiece.dataset.id;
     activePiece.parentNode.removeChild(activePiece);
     if (boardState[key]) delete boardState[key];
@@ -356,12 +410,14 @@ function make_pieces_responsive() {
   pieces.forEach((piece) => {
     piece.style.cursor = "grab";
     piece.addEventListener("mousedown", eventOnMouseDown);
-    piece.addEventListener("touchstart", (e) => eventOnMouseDown(normalizeEvent(e)));
+    piece.addEventListener("touchstart", (e) =>
+      eventOnMouseDown(normalizeEvent(e))
+    );
   });
 }
 make_pieces_responsive();
 
-function normalizeEvent(e){
+function normalizeEvent(e) {
   // take touchpad or mouse event
   // if touch, then reformat like it was a mouse
   let x, y;
@@ -381,7 +437,9 @@ function normalizeEvent(e){
 }
 
 document.addEventListener("mousemove", eventOnMouseMove);
-document.addEventListener("touchmove", (e) => eventOnMouseMove(normalizeEvent(e)));
+document.addEventListener("touchmove", (e) =>
+  eventOnMouseMove(normalizeEvent(e))
+);
 
 document.addEventListener("mouseup", eventOnMouseUp);
 document.addEventListener("touchend", (e) => eventOnMouseUp(normalizeEvent(e)));
@@ -391,7 +449,7 @@ document.getElementById("buttonLogin").onclick = function () {
 
   document.getElementById("coverBox").style.zIndex = -1;
   document.getElementById("coverBox").style.display = "none";
-  
+
   if (friend_id === "") {
     //starting Solo
     //nothing happens
