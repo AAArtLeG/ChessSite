@@ -428,6 +428,10 @@ function normalizeEvent(e) {
   if (e.touches && e.touches.length > 0) {
     x = e.touches[0].clientX;
     y = e.touches[0].clientY;
+  } else if (e.changedTouches && e.changedTouches.length > 0) {
+    // когда normalizeEvent вызывается для ивента touchend touches уже не существуют, но вместо них есть changedToches
+    x = e.changedTouches[0].clientX;
+    y = e.changedTouches[0].clientY;
   } else {
     x = e.clientX;
     y = e.clientY;
@@ -436,7 +440,10 @@ function normalizeEvent(e) {
     ...e,
     clientX: x,
     clientY: y,
-    //currentTarget: e.currentTarget
+    // это "искусственный" ивент, а не настоящий и у него без мануального определения нет встроеных currentTarget и preventDefault
+    // поэтому дальше без них в eventOnMouseDown на моменте их использования все ломалось
+    currentTarget: e.currentTarget,
+    preventDefault: () => e.preventDefault(),
   };
 }
 
